@@ -185,7 +185,6 @@ ClientBin/
 *.dbproj.schemaview
 *.pfx
 *.publishsettings
-node_modules/
 orleans.codegen.cs
 
 # RIA/Silverlight projects
@@ -240,3 +239,4 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+/MeanStackProject/node_modules/.bin
