@@ -1,0 +1,9 @@
+{
+  "name": "mean-stack-project",
+  "version": "0.0.0",
+  "description": "MeanStackProject",
+  "main": "server.js",
+  "author": {
+    "name": "the1_"
+  }
+}
