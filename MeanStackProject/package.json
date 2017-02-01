@@ -2,18 +2,26 @@
   "name": "mean-stack-project",
   "version": "0.0.1",
   "description": "MeanStackProject",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": "6.9.x",
+    "npm": "3.10.x"
   },
   "author": "me",
   "license": "BSD-2-Clause",
   "dependencies": {
+    "bluebird": "^3.4.7",
     "body-parser": "~1.2.0",
     "express": "~4.2.0",
     "jade": "~1.3.1",
     "mongoose": "^4",
     "morgan": "~1.0.1",
     "stylus": "~0.45.0"
+  },
+  "devDependencies": {
+    "bower": "^1.8.0"
   }
 }
