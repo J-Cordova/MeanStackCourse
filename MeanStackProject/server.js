@@ -1,91 +1,43 @@
-﻿var express = require('express');
-var stylus = require('stylus');
-var logger = require('morgan');
-var bodyParser = require('body-parser');
+﻿
+var express = require('express');
 var mongoose = require('mongoose');
-
-var env = process.env.NODE_ENV = process.env.NODE_ENV || 'development'
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
+var env = process.env.NODE_ENV || 'development';
 
 var app = express();
 
-//setsup stylus middleware
-function compile(str, path)
-{
-    return stylus(str).set('filename', path);
-}
+var config = require('./server/config/config')[env];
 
+require('./server/config/express')(app,config);
+require('./server/config/mongoose')(config);
 
+var User = mongoose.model('User');
 
-app.set('views', __dirname + '/server/views');
-app.set('view engine', 'jade');
-app.use(stylus.middleware(
+passport.use(new LocalStrategy(
+    function(username,password,done)
     {
-        src: __dirname + 'public',
-        compile: compile
+        User.findOne({userName: username}).exec(function(err,user)
+        {           
+            return user && user.authenticate(password) ? done(null,user) : done(null,false); 
+        });
     }
 ));
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-//static route handling
-app.use(express.static(__dirname + '/public')); // Lets express know to serve up matching file from this directory gets favicon.ico
-app.use(logger('dev'));
 
-
-mongoose.Promise = require('bluebird');//global.Promise;
-
-if (env === 'development')
+passport.serializeUser(function(user,done)
 {
-    mongoose.connect('mongodb://localhost/multivision');
-}
-else
-{
-    mongoose.connect('mongodb://jordan:multivision@ds033096.mlab.com:33096/multivision');
-}
-
-
-var db = mongoose.connection;
-
-db.on('error', console.error.bind(console, 'connection error...'));
-db.once('open', function ()
-{
-    console.log('db opened');
-});
- 
-//Schemas
-var messageSchema = mongoose.Schema(
-{
-    message: String
+    return user ? done(null,user._id) : done(null,false); 
 });
 
-var Message = mongoose.model('message', messageSchema);
-var mongoMessage;
-Message.findOne({},function (err, messageDoc)
+passport.deserializeUser(function(id,done)
 {
-    console.log(messageDoc || 'No message');
-    mongoMessage = messageDoc.message;
+    User.findOne({_id:id}).exec(function(err,user)
+    {
+        return user ? done(null,user) : done(null,false);
+    })
 });
 
+require('./server/config/routes')(app);
 
-//End Schemas
-
-
-app.get('/partials/:partialPath', function (req, res)
-{
-    res.render('partials/' + req.params.partialPath);
-});
-
-
-app.get('*', function (req, res)// matches all routes or coordinate routes between client and server
-{
-    res.render('index', {
-        mongoMessage: mongoMessage
-    });
-});  
-
-
-
-var port = process.env.PORT || 3030;
-
-app.listen(port);
-
-console.log('Listening on port ' + port + '...');
+app.listen(config.port);
+console.log('Listening on port ' +config.port + '...');

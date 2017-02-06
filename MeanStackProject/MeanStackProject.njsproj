@@ -5895,6 +5895,7 @@
     <Compile Include="node_modules\yargs\lib\usage.js" />
     <Compile Include="node_modules\yargs\lib\validation.js" />
     <Compile Include="public\app\app.js" />
+    <Compile Include="public\app\main\mvMainCtrl.js" />
     <Compile Include="public\vendor\angular-resource\angular-resource.js" />
     <Compile Include="public\vendor\angular-resource\angular-resource.min.js" />
     <Compile Include="public\vendor\angular-resource\index.js" />
@@ -8044,9 +8045,14 @@
     <Content Include="README.md" />
     <Content Include="server\include\layout.jade" />
     <Content Include="server\include\scripts.jade" />
+    <Content Include="server\views\index.html" />
     <Content Include="server\views\index.jade" />
+    <Content Include="server\views\partials\featured-courses.html" />
+    <Content Include="server\views\partials\featured-courses.jade" />
     <Content Include="server\views\partials\main.html" />
     <Content Include="server\views\partials\main.jade" />
+    <Content Include="server\views\partials\new-courses.html" />
+    <Content Include="server\views\partials\new-courses.jade" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="node_modules\bower\" />
@@ -8828,6 +8834,7 @@
     <Folder Include="node_modules\bower\lib\templates\std\" />
     <Folder Include="node_modules\bower\lib\util\" />
     <Folder Include="public\" />
+    <Folder Include="public\app\main\" />
     <Folder Include="public\css\" />
     <Folder Include="public\app\" />
     <Folder Include="public\vendor\" />
