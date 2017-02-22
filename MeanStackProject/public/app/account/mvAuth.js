@@ -1,4 +1,4 @@
-angular.module('app').factory('mvAuth', function($http, mvIdentity, $q) {
+angular.module('app').factory('mvAuth', function($http, mvIdentity, $q, mvUser) {
 
   return {
     authenticateUser: function(username,password)
@@ -10,7 +10,10 @@ angular.module('app').factory('mvAuth', function($http, mvIdentity, $q) {
         {
             if(response.data.success)
             {
-                mvIdentity.currentUser = response.data.user;
+                var user = new mvUser();
+                angular.extend(user, response.data.user);
+
+                mvIdentity.currentUser = user;// now has isAdmin function
                 deferred.resolve(true);
             }
             else
@@ -30,6 +33,65 @@ angular.module('app').factory('mvAuth', function($http, mvIdentity, $q) {
             dfd.resolve();
         })
         return dfd.promise;
-    }
+    },
+    authorizeCurrentUserForRoute: function(role)
+    {
+        if(mvIdentity.isAuthorized('admin'))
+        {
+            return true;
+        }
+        else
+        {
+            return $q.reject('not authorized');
+        }
+    },
+    authorizeAuthenticatedUserForRoute: function()
+    {
+        if(mvIdentity.isAuthenticated())
+        {
+            return true;
+        }
+        else
+        {
+            return $q.reject('not authorized');
+        }
+    },
+    createUser:function(newUserData)
+    {
+        var newUser = new mvUser(newUserData);
+
+        var dfd = $q.defer();
+
+        newUser.$save().then(function()
+        {
+            mvIdentity.currentUser = newUser;
+            dfd.resolve();
+        },
+        function(response)
+        {
+            dfd.reject(response.data.reason);
+        })
+
+        return dfd.promise;
+    },
+    updateCurrentUser: function(newUserData) {
+      var dfd = $q.defer();
+
+      var clone = angular.copy(mvIdentity.currentUser);
+
+      angular.extend(clone, newUserData);
+
+            //Save is post so put for update
+      clone.$update().then(function() 
+      {
+        mvIdentity.currentUser = clone;
+        dfd.resolve();
+      }, 
+      function(response)
+      {
+        dfd.reject(response.data.reason);
+      });
+      return dfd.promise;
+    },
   };
 });
